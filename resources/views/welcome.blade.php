@@ -71,6 +71,15 @@
                         <a href="{{ route('login', ['role' => 'parent']) }}" class="bb-btn-secondary">{{ __('ui.parent_login') }}</a>
                         <a href="{{ route('login', ['role' => 'child']) }}" class="bb-btn-secondary">{{ __('ui.child_login') }}</a>
                     </div>
+                    <div class="mt-6 bb-card p-4">
+                        <p class="font-semibold">{{ __('ui.social_feature_title') }}</p>
+                        <p class="text-sm text-slate-600 mt-1">{{ __('ui.social_feature_desc') }}</p>
+                        <div class="mt-3 flex flex-wrap gap-2">
+                            <span class="rounded-lg bg-indigo-50 text-indigo-700 px-2.5 py-1 text-xs font-semibold">{{ __('ui.feature_friend_requests') }}</span>
+                            <span class="rounded-lg bg-indigo-50 text-indigo-700 px-2.5 py-1 text-xs font-semibold">{{ __('ui.feature_parent_chat') }}</span>
+                            <span class="rounded-lg bg-indigo-50 text-indigo-700 px-2.5 py-1 text-xs font-semibold">{{ __('ui.feature_child_parent_chat') }}</span>
+                        </div>
+                    </div>
                     <div class="mt-6 bb-ad-slot">
                         <a href="https://leadercoders.com" target="_blank" rel="noopener noreferrer" class="block hover:opacity-90 transition">
                             <p class="font-semibold">{{ __('ui.ad_headline') }}</p>
@@ -108,6 +117,10 @@
                 <article class="bb-card p-5">
                     <h3 class="font-semibold">{{ __('ui.feature_history_title') }}</h3>
                     <p class="mt-2 text-sm text-slate-700">{{ __('ui.feature_history_desc') }}</p>
+                </article>
+                <article class="bb-card p-5">
+                    <h3 class="font-semibold">{{ __('ui.social_area') }}</h3>
+                    <p class="mt-2 text-sm text-slate-700">{{ __('ui.social_feature_short') }}</p>
                 </article>
             </div>
             <div class="mt-4 bb-ad-slot">

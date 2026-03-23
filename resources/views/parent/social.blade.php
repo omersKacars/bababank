@@ -14,6 +14,10 @@
             @endif
 
             <div class="bb-card p-6">
+                <div class="flex items-center justify-between gap-3 mb-3">
+                    <h3 class="font-semibold">{{ __('ui.social_area') }}</h3>
+                    <a href="{{ route('parent.messages.index') }}" class="text-indigo-700 underline text-sm">{{ __('ui.messages_hub') }}</a>
+                </div>
                 <form method="GET" action="{{ route('parent.social.index') }}" class="flex gap-3">
                     <x-text-input name="q" :value="$query" type="text" :placeholder="__('ui.search_parents')" class="w-full" />
                     <x-primary-button type="submit">{{ __('ui.search') }}</x-primary-button>

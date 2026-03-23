@@ -5,6 +5,7 @@ use App\Http\Controllers\ChildMessageController;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\ParentChildController;
 use App\Http\Controllers\ParentDashboardController;
+use App\Http\Controllers\ParentMessagesController;
 use App\Http\Controllers\ParentSocialController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TransactionController;
@@ -49,6 +50,7 @@ Route::middleware(['auth', 'role:parent'])->prefix('parent')->group(function () 
     Route::patch('/transactions/{transaction}/void', [TransactionController::class, 'void'])->name('parent.transactions.void');
 
     Route::get('/social', [ParentSocialController::class, 'index'])->name('parent.social.index');
+    Route::get('/messages', [ParentMessagesController::class, 'index'])->name('parent.messages.index');
     Route::post('/social/requests/{receiver}', [ParentSocialController::class, 'sendRequest'])->name('parent.social.request.send');
     Route::patch('/social/requests/{friendRequest}', [ParentSocialController::class, 'respondRequest'])->name('parent.social.request.respond');
 });

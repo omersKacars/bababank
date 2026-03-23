@@ -13,14 +13,19 @@
                 </div>
             @endif
 
-            <div class="bb-card p-4 flex items-center justify-between">
+            <div class="bb-card p-4 flex flex-wrap items-center justify-between gap-3">
                 <div>
                     <p class="font-semibold">{{ __('ui.parent_panel') }}</p>
                     <p class="text-sm text-gray-500">{{ __('ui.unread_child_messages') }}: {{ $unreadChildMessages }}</p>
                 </div>
-                <a href="{{ route('parent.social.index') }}" class="bb-btn-secondary">
-                    {{ __('ui.social_area') }}
-                </a>
+                <div class="flex items-center gap-2">
+                    <a href="{{ route('parent.social.index') }}" class="bb-btn-secondary">
+                        {{ __('ui.social_area') }}
+                    </a>
+                    <a href="{{ route('parent.messages.index') }}" class="bb-btn-primary">
+                        {{ __('ui.messages_hub') }}
+                    </a>
+                </div>
             </div>
 
             <div class="bb-ad-slot text-sm">
@@ -146,24 +151,12 @@
             </div>
 
             <div class="bb-card p-6">
-                <h3 class="text-lg font-semibold mb-3">{{ __('ui.child_parent_conversations') }}</h3>
-                <ul class="space-y-2">
-                    @forelse ($childParentConversations as $conversation)
-                        @php
-                            $other = $conversation->participants->firstWhere('id', '!=', $parent->id);
-                            $last = $conversation->messages->first();
-                        @endphp
-                        <li class="flex items-center justify-between">
-                            <div>
-                                <p class="font-medium">{{ $other?->name ?? __('ui.unknown_user') }}</p>
-                                <p class="text-xs text-gray-500">{{ $last?->body ?? __('ui.no_messages_yet') }}</p>
-                            </div>
-                            <a class="underline text-indigo-700" href="{{ route('conversations.show', $conversation) }}">{{ __('ui.open_conversation') }}</a>
-                        </li>
-                    @empty
-                        <li class="text-gray-500">{{ __('ui.no_conversations') }}</li>
-                    @endforelse
-                </ul>
+                <h3 class="text-lg font-semibold mb-3">{{ __('ui.social_feature_title') }}</h3>
+                <p class="text-sm text-gray-600">{{ __('ui.social_feature_desc') }}</p>
+                <div class="mt-4 flex flex-wrap gap-3">
+                    <a class="bb-btn-secondary" href="{{ route('parent.social.index') }}">{{ __('ui.social_area') }}</a>
+                    <a class="bb-btn-primary" href="{{ route('parent.messages.index') }}">{{ __('ui.messages_hub') }}</a>
+                </div>
             </div>
 
             <div class="bb-card p-6">

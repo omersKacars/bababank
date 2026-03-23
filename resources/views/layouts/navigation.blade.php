@@ -20,6 +20,9 @@
                         <x-nav-link :href="route('parent.social.index')" :active="request()->routeIs('parent.social.*')">
                             <span class="text-indigo-100">{{ __('ui.social_area') }}</span>
                         </x-nav-link>
+                        <x-nav-link :href="route('parent.messages.index')" :active="request()->routeIs('parent.messages.*')">
+                            <span class="text-indigo-100">{{ __('ui.messages_hub') }}</span>
+                        </x-nav-link>
                     @endif
                 </div>
             </div>
@@ -82,6 +85,9 @@
             @if(auth()->user()?->isParent())
                 <x-responsive-nav-link :href="route('parent.social.index')" :active="request()->routeIs('parent.social.*')">
                     {{ __('ui.social_area') }}
+                </x-responsive-nav-link>
+                <x-responsive-nav-link :href="route('parent.messages.index')" :active="request()->routeIs('parent.messages.*')">
+                    {{ __('ui.messages_hub') }}
                 </x-responsive-nav-link>
             @endif
         </div>

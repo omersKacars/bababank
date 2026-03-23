@@ -3,7 +3,6 @@
 namespace App\Http\Controllers;
 
 use App\Models\AuditLog;
-use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
@@ -18,13 +17,6 @@ class ParentDashboardController extends Controller
         $children = $parent->children()
             ->with(['account', 'transactionsAsChild' => fn ($query) => $query->latest()->limit(5)])
             ->orderBy('name')
-            ->get();
-
-        $childParentConversations = Conversation::query()
-            ->where('type', 'child_parent')
-            ->whereHas('participants', fn ($q) => $q->where('users.id', $parent->id))
-            ->with(['participants', 'messages' => fn ($q) => $q->latest()->limit(1)])
-            ->latest()
             ->get();
 
         $latestAuditLogs = AuditLog::query()
@@ -45,7 +37,6 @@ class ParentDashboardController extends Controller
         return view('parent.dashboard', [
             'parent' => $parent,
             'children' => $children,
-            'childParentConversations' => $childParentConversations,
             'latestAuditLogs' => $latestAuditLogs,
             'unreadChildMessages' => $unreadChildMessages,
         ]);
