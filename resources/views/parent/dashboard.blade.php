@@ -13,6 +13,16 @@
                 </div>
             @endif
 
+            <div class="bb-card p-4 flex items-center justify-between">
+                <div>
+                    <p class="font-semibold">{{ __('ui.parent_panel') }}</p>
+                    <p class="text-sm text-gray-500">{{ __('ui.unread_child_messages') }}: {{ $unreadChildMessages }}</p>
+                </div>
+                <a href="{{ route('parent.social.index') }}" class="bb-btn-secondary">
+                    {{ __('ui.social_area') }}
+                </a>
+            </div>
+
             <div class="bb-ad-slot text-sm">
                 <a href="https://leadercoders.com" target="_blank" rel="noopener noreferrer" class="block hover:opacity-90 transition">
                     <p class="font-semibold">{{ __('ui.ad_headline') }}</p>
@@ -81,25 +91,93 @@
                             <x-primary-button>{{ __('ui.update_balance') }}</x-primary-button>
                         </form>
 
+                        <form method="POST" action="{{ route('parent.children.password.update', $child) }}" class="space-y-2 border-t pt-3">
+                            @csrf
+                            @method('PATCH')
+                            <h4 class="font-medium">{{ __('ui.child_password_update') }}</h4>
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                                <x-text-input name="new_password" type="password" :placeholder="__('ui.new_password')" required />
+                                <x-text-input name="new_password_confirmation" type="password" :placeholder="__('ui.password_confirm')" required />
+                            </div>
+                            <x-secondary-button type="submit">{{ __('ui.update_child_password') }}</x-secondary-button>
+                        </form>
+
                         <div>
                             <h4 class="font-medium mb-2">{{ __('ui.recent_transactions') }}</h4>
                             <ul class="text-sm space-y-1">
                                 @forelse($child->transactionsAsChild as $tx)
-                                    <li>
-                                        {{ $tx->type === 'deposit' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }} TL
-                                        <span class="text-gray-500">({{ $tx->created_at->format('d.m.Y H:i') }})</span>
+                                    <li class="flex items-center justify-between gap-3">
+                                        <div>
+                                            {{ $tx->type === 'deposit' ? '+' : '-' }}{{ number_format($tx->amount, 0, ',', '.') }} TL
+                                            <span class="text-gray-500">({{ $tx->created_at->format('d.m.Y H:i') }})</span>
+                                            @if($tx->isVoided())
+                                                <span class="text-amber-700 text-xs">- {{ __('ui.voided') }}: {{ $tx->void_reason }}</span>
+                                            @endif
+                                        </div>
+                                        @if(! $tx->isVoided())
+                                            <form method="POST" action="{{ route('parent.transactions.void', $tx) }}" class="inline-flex items-center gap-2">
+                                                @csrf
+                                                @method('PATCH')
+                                                <input name="void_reason" class="rounded-md border-gray-300 text-xs" placeholder="{{ __('ui.void_reason') }}" required>
+                                                <button class="text-red-600 text-xs underline" type="submit">{{ __('ui.void_transaction') }}</button>
+                                            </form>
+                                        @endif
                                     </li>
                                 @empty
                                     <li class="text-gray-500">{{ __('ui.no_transactions') }}</li>
                                 @endforelse
                             </ul>
                         </div>
+
+                        <form method="POST" action="{{ route('parent.children.destroy', $child) }}" class="border-t pt-3 space-y-2">
+                            @csrf
+                            @method('DELETE')
+                            <h4 class="font-medium text-red-700">{{ __('ui.delete_child') }}</h4>
+                            <p class="text-xs text-gray-500">{{ __('ui.delete_child_hint', ['username' => $child->username]) }}</p>
+                            <x-text-input name="confirm_username" type="text" required />
+                            <button class="text-red-700 text-sm underline" type="submit">{{ __('ui.delete_child') }}</button>
+                        </form>
                     </div>
                 @empty
                     <div class="bb-card p-6 text-gray-600">
                         {{ __('ui.no_child_accounts') }}
                     </div>
                 @endforelse
+            </div>
+
+            <div class="bb-card p-6">
+                <h3 class="text-lg font-semibold mb-3">{{ __('ui.child_parent_conversations') }}</h3>
+                <ul class="space-y-2">
+                    @forelse ($childParentConversations as $conversation)
+                        @php
+                            $other = $conversation->participants->firstWhere('id', '!=', $parent->id);
+                            $last = $conversation->messages->first();
+                        @endphp
+                        <li class="flex items-center justify-between">
+                            <div>
+                                <p class="font-medium">{{ $other?->name ?? __('ui.unknown_user') }}</p>
+                                <p class="text-xs text-gray-500">{{ $last?->body ?? __('ui.no_messages_yet') }}</p>
+                            </div>
+                            <a class="underline text-indigo-700" href="{{ route('conversations.show', $conversation) }}">{{ __('ui.open_conversation') }}</a>
+                        </li>
+                    @empty
+                        <li class="text-gray-500">{{ __('ui.no_conversations') }}</li>
+                    @endforelse
+                </ul>
+            </div>
+
+            <div class="bb-card p-6">
+                <h3 class="text-lg font-semibold mb-3">{{ __('ui.audit_logs') }}</h3>
+                <ul class="text-sm space-y-2">
+                    @forelse($latestAuditLogs as $log)
+                        <li class="flex items-center justify-between border-b pb-2">
+                            <span>{{ $log->action }}</span>
+                            <span class="text-gray-500">{{ $log->created_at->format('d.m.Y H:i') }}</span>
+                        </li>
+                    @empty
+                        <li class="text-gray-500">{{ __('ui.no_audit_logs') }}</li>
+                    @endforelse
+                </ul>
             </div>
 
             <div class="bb-ad-slot text-sm">

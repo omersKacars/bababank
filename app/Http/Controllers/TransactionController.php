@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Transaction;
 use App\Models\User;
+use App\Services\AuditLogger;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -43,15 +44,61 @@ class TransactionController extends Controller
 
             $account->update(['balance' => $newBalance]);
 
-            Transaction::create([
+            $transaction = Transaction::create([
                 'child_user_id' => $child->id,
                 'parent_user_id' => $parent->id,
                 'type' => $data['type'],
                 'amount' => $data['amount'],
                 'note' => $data['note'] ?? null,
             ]);
+
+            AuditLogger::log($parent, 'transaction.created', $transaction, [
+                'type' => $transaction->type,
+                'amount' => $transaction->amount,
+            ]);
         });
 
         return back()->with('status', __('ui.balance_updated'));
+    }
+
+    public function void(Request $request, Transaction $transaction): RedirectResponse
+    {
+        /** @var User $parent */
+        $parent = $request->user();
+        abort_unless($parent->isParent(), 403);
+
+        $transaction->load('child.account');
+        abort_unless($transaction->child?->parent_id === $parent->id, 403);
+        abort_if($transaction->isVoided(), 422, __('ui.transaction_already_voided'));
+
+        $data = $request->validate([
+            'void_reason' => ['required', 'string', 'max:255'],
+        ]);
+
+        $account = $transaction->child?->account;
+        if (! $account) {
+            abort(404);
+        }
+
+        DB::transaction(function () use ($transaction, $account, $data, $parent): void {
+            if ($transaction->type === 'deposit') {
+                $newBalance = max(0, $account->balance - $transaction->amount);
+            } else {
+                $newBalance = $account->balance + $transaction->amount;
+            }
+
+            $account->update(['balance' => $newBalance]);
+
+            $transaction->update([
+                'voided_at' => now(),
+                'void_reason' => $data['void_reason'],
+            ]);
+
+            AuditLogger::log($parent, 'transaction.voided', $transaction, [
+                'void_reason' => $data['void_reason'],
+            ]);
+        });
+
+        return back()->with('status', __('ui.transaction_voided'));
     }
 }

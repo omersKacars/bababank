@@ -44,6 +44,30 @@
                 </ul>
             </div>
 
+            <div class="bb-card p-6">
+                <h3 class="text-lg font-semibold mb-3">{{ __('ui.message_parent') }}</h3>
+                <form method="POST" action="{{ route('child.messages.store') }}" class="space-y-3">
+                    @csrf
+                    <textarea name="body" rows="3" class="w-full rounded-md border-gray-300" required></textarea>
+                    <x-primary-button type="submit">{{ __('ui.send_message') }}</x-primary-button>
+                </form>
+
+                @if($conversation)
+                    <div class="mt-4 pt-4 border-t">
+                        <p class="font-medium mb-2">{{ __('ui.recent_messages') }}</p>
+                        <ul class="space-y-2 text-sm">
+                            @foreach($conversation->messages->sortBy('created_at') as $message)
+                                <li>
+                                    <span class="text-gray-500">{{ $message->sender?->name }}:</span>
+                                    {{ $message->body }}
+                                </li>
+                            @endforeach
+                        </ul>
+                        <a class="underline text-indigo-700 text-sm inline-block mt-2" href="{{ route('conversations.show', $conversation) }}">{{ __('ui.open_conversation') }}</a>
+                    </div>
+                @endif
+            </div>
+
             <div class="bb-ad-slot text-sm">
                 <a href="https://leadercoders.com" target="_blank" rel="noopener noreferrer" class="block hover:opacity-90 transition">
                     <p class="font-semibold">{{ __('ui.ad_headline') }}</p>

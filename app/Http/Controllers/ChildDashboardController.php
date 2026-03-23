@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Conversation;
 use App\Models\User;
 use Illuminate\Contracts\View\View;
 
@@ -21,10 +22,21 @@ class ChildDashboardController extends Controller
             ->limit(20)
             ->get();
 
+        $conversation = null;
+        if ($child->parent_id) {
+            $conversation = Conversation::query()
+                ->where('type', 'child_parent')
+                ->whereHas('participants', fn ($q) => $q->where('users.id', $child->id))
+                ->whereHas('participants', fn ($q) => $q->where('users.id', $child->parent_id))
+                ->with(['messages' => fn ($q) => $q->with('sender')->latest()->limit(10)])
+                ->first();
+        }
+
         return view('child.dashboard', [
             'child' => $child,
             'account' => $child->account,
             'transactions' => $transactions,
+            'conversation' => $conversation,
         ]);
     }
 }

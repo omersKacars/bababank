@@ -16,6 +16,11 @@
                     <x-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                         <span class="text-indigo-100">Dashboard</span>
                     </x-nav-link>
+                    @if(auth()->user()?->isParent())
+                        <x-nav-link :href="route('parent.social.index')" :active="request()->routeIs('parent.social.*')">
+                            <span class="text-indigo-100">{{ __('ui.social_area') }}</span>
+                        </x-nav-link>
+                    @endif
                 </div>
             </div>
 
@@ -74,6 +79,11 @@
             <x-responsive-nav-link :href="route('dashboard')" :active="request()->routeIs('dashboard')">
                 {{ __('ui.dashboard') }}
             </x-responsive-nav-link>
+            @if(auth()->user()?->isParent())
+                <x-responsive-nav-link :href="route('parent.social.index')" :active="request()->routeIs('parent.social.*')">
+                    {{ __('ui.social_area') }}
+                </x-responsive-nav-link>
+            @endif
         </div>
 
         <!-- Responsive Settings Options -->

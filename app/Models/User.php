@@ -6,10 +6,12 @@ namespace App\Models;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Attributes\Fillable;
 use Illuminate\Database\Eloquent\Attributes\Hidden;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
@@ -18,7 +20,7 @@ use Illuminate\Notifications\Notifiable;
 class User extends Authenticatable
 {
     /** @use HasFactory<UserFactory> */
-    use HasFactory, Notifiable;
+    use HasFactory, Notifiable, SoftDeletes;
 
     /**
      * Get the attributes that should be cast.
@@ -39,7 +41,7 @@ class User extends Authenticatable
 
     public function children(): HasMany
     {
-        return $this->hasMany(User::class, 'parent_id');
+        return $this->hasMany(User::class, 'parent_id')->whereNull('deleted_at');
     }
 
     public function account(): HasOne
@@ -65,5 +67,37 @@ class User extends Authenticatable
     public function isChild(): bool
     {
         return $this->role === 'child';
+    }
+
+    public function sentFriendRequests(): HasMany
+    {
+        return $this->hasMany(FriendRequest::class, 'sender_user_id');
+    }
+
+    public function receivedFriendRequests(): HasMany
+    {
+        return $this->hasMany(FriendRequest::class, 'receiver_user_id');
+    }
+
+    public function friendshipsAsUserOne(): HasMany
+    {
+        return $this->hasMany(Friendship::class, 'user_one_id');
+    }
+
+    public function friendshipsAsUserTwo(): HasMany
+    {
+        return $this->hasMany(Friendship::class, 'user_two_id');
+    }
+
+    public function conversations(): BelongsToMany
+    {
+        return $this->belongsToMany(Conversation::class, 'conversation_participants')
+            ->withPivot('last_read_at')
+            ->withTimestamps();
+    }
+
+    public function auditLogs(): HasMany
+    {
+        return $this->hasMany(AuditLog::class, 'actor_user_id');
     }
 }
