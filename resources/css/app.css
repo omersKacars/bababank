@@ -1,0 +1,83 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html.theme-dark {
+    color-scheme: dark;
+  }
+
+  html.theme-light {
+    color-scheme: light;
+  }
+}
+
+@layer components {
+  .bb-gradient-bg {
+    @apply transition-colors duration-300;
+  }
+
+  .theme-dark .bb-gradient-bg {
+    @apply bg-slate-950 text-slate-100;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.35), transparent 38%),
+      radial-gradient(circle at 85% 8%, rgba(14, 165, 233, 0.20), transparent 30%),
+      linear-gradient(180deg, #0b1020 0%, #0a0f1c 55%, #070b15 100%);
+  }
+
+  .theme-light .bb-gradient-bg {
+    @apply bg-slate-100 text-slate-900;
+    background-image:
+      radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15), transparent 40%),
+      radial-gradient(circle at 85% 8%, rgba(14, 165, 233, 0.12), transparent 34%),
+      linear-gradient(180deg, #eef2ff 0%, #f8fafc 55%, #f1f5f9 100%);
+  }
+
+  .bb-surface {
+    @apply rounded-2xl shadow-2xl;
+  }
+
+  .theme-dark .bb-surface {
+    @apply border border-white/10 bg-white/95 text-slate-900 shadow-slate-900/40;
+  }
+
+  .theme-light .bb-surface {
+    @apply border border-slate-200 bg-white text-slate-900 shadow-slate-900/10;
+  }
+
+  .bb-card {
+    @apply rounded-2xl border bg-white shadow-xl;
+  }
+
+  .theme-dark .bb-card {
+    @apply border-white/10 bg-white/95 text-slate-900 shadow-slate-900/30;
+  }
+
+  .theme-light .bb-card {
+    @apply border-slate-200 bg-white text-slate-900 shadow-slate-900/10;
+  }
+
+  .bb-ad-slot {
+    @apply rounded-xl border border-dashed p-4 text-sm font-medium;
+  }
+
+  .theme-dark .bb-ad-slot {
+    @apply border-indigo-300/50 bg-indigo-200/10 text-indigo-100;
+  }
+
+  .theme-light .bb-ad-slot {
+    @apply border-indigo-300 bg-indigo-50 text-indigo-700;
+  }
+
+  .bb-hero-title {
+    @apply text-4xl sm:text-5xl lg:text-6xl font-black tracking-tight leading-tight;
+  }
+
+  .bb-btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-900/30 transition hover:bg-indigo-700 hover:-translate-y-0.5;
+  }
+
+  .bb-btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-300 bg-white/90 px-5 py-3 text-sm font-semibold text-slate-800 transition hover:bg-slate-100 hover:-translate-y-0.5;
+  }
+}
