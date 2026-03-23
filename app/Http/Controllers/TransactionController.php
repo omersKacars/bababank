@@ -17,7 +17,11 @@ class TransactionController extends Controller
         /** @var User $parent */
         $parent = $request->user();
 
-        abort_unless($child->isChild() && $child->parent_id === $parent->id, 403);
+        $canManage = $child->isChild() && (
+            ($parent->family_id !== null && $child->family_id === $parent->family_id)
+            || ($parent->family_id === null && $child->parent_id === $parent->id)
+        );
+        abort_unless($canManage, 403);
 
         $data = $request->validate([
             'type' => ['required', 'in:deposit,withdraw'],
@@ -68,7 +72,12 @@ class TransactionController extends Controller
         abort_unless($parent->isParent(), 403);
 
         $transaction->load('child.account');
-        abort_unless($transaction->child?->parent_id === $parent->id, 403);
+        $child = $transaction->child;
+        $canManage = $child && (
+            ($parent->family_id !== null && $child->family_id === $parent->family_id)
+            || ($parent->family_id === null && $child->parent_id === $parent->id)
+        );
+        abort_unless($canManage, 403);
         abort_if($transaction->isVoided(), 422, __('ui.transaction_already_voided'));
 
         $data = $request->validate([

@@ -14,7 +14,7 @@ class ParentDashboardController extends Controller
         /** @var User $parent */
         $parent = auth()->user();
 
-        $children = $parent->children()
+        $children = $parent->familyChildren()
             ->with(['account', 'transactionsAsChild' => fn ($query) => $query->latest()->limit(5)])
             ->orderBy('name')
             ->get();

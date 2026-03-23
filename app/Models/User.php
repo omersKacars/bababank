@@ -15,7 +15,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-#[Fillable(['name', 'username', 'email', 'password', 'role', 'parent_id'])]
+#[Fillable(['name', 'username', 'email', 'password', 'role', 'parent_id', 'family_id'])]
 #[Hidden(['password', 'remember_token'])]
 class User extends Authenticatable
 {
@@ -39,9 +39,28 @@ class User extends Authenticatable
         return $this->belongsTo(User::class, 'parent_id');
     }
 
+    public function family(): BelongsTo
+    {
+        return $this->belongsTo(Family::class);
+    }
+
     public function children(): HasMany
     {
         return $this->hasMany(User::class, 'parent_id')->whereNull('deleted_at');
+    }
+
+    public function familyChildren(): HasMany
+    {
+        return $this->hasMany(User::class, 'family_id', 'family_id')
+            ->where('role', 'child')
+            ->whereNull('deleted_at');
+    }
+
+    public function familyParents(): HasMany
+    {
+        return $this->hasMany(User::class, 'family_id', 'family_id')
+            ->where('role', 'parent')
+            ->whereNull('deleted_at');
     }
 
     public function account(): HasOne

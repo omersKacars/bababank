@@ -38,6 +38,7 @@ class ParentChildController extends Controller
                 'email' => null,
                 'role' => 'child',
                 'parent_id' => $parent->id,
+                'family_id' => $parent->family_id,
                 'password' => Hash::make($validated['password']),
             ]);
 
@@ -58,7 +59,11 @@ class ParentChildController extends Controller
     {
         /** @var User $parent */
         $parent = $request->user();
-        abort_unless($child->isChild() && $child->parent_id === $parent->id, 403);
+        $canManage = $child->isChild() && (
+            ($parent->family_id !== null && $child->family_id === $parent->family_id)
+            || ($parent->family_id === null && $child->parent_id === $parent->id)
+        );
+        abort_unless($canManage, 403);
 
         $validated = $request->validate([
             'new_password' => ['required', 'confirmed', Password::defaults()],
@@ -77,7 +82,11 @@ class ParentChildController extends Controller
     {
         /** @var User $parent */
         $parent = $request->user();
-        abort_unless($child->isChild() && $child->parent_id === $parent->id, 403);
+        $canManage = $child->isChild() && (
+            ($parent->family_id !== null && $child->family_id === $parent->family_id)
+            || ($parent->family_id === null && $child->parent_id === $parent->id)
+        );
+        abort_unless($canManage, 403);
 
         $request->validate([
             'confirm_username' => ['required', 'string'],
@@ -95,5 +104,32 @@ class ParentChildController extends Controller
         ]);
 
         return back()->with('status', __('ui.child_deleted'));
+    }
+
+    public function storeParent(Request $request): RedirectResponse
+    {
+        /** @var User $parent */
+        $parent = $request->user();
+        abort_unless($parent->isParent() && $parent->family_id !== null, 403);
+
+        $validated = $request->validate([
+            'name' => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[\pL\pN._-]+$/u', 'unique:users,username'],
+            'email' => ['required', 'string', 'email', 'max:255', 'unique:users,email'],
+            'password' => ['required', 'confirmed', Password::defaults()],
+        ]);
+
+        $newParent = User::create([
+            'name' => $validated['name'],
+            'username' => $validated['username'],
+            'email' => $validated['email'],
+            'role' => 'parent',
+            'family_id' => $parent->family_id,
+            'password' => Hash::make($validated['password']),
+        ]);
+
+        AuditLogger::log($parent, 'parent.added_to_family', $newParent);
+
+        return back()->with('status', __('ui.parent_added'));
     }
 }

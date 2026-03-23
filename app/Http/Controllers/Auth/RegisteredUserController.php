@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
+use App\Models\Family;
 use App\Models\User;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
@@ -33,6 +34,7 @@ class RegisteredUserController extends Controller
         $request->validate(
             [
                 'name' => ['required', 'string', 'max:255'],
+                'family_name' => ['required', 'string', 'max:120'],
                 'username' => ['required', 'string', 'min:3', 'max:50', 'regex:/^[\pL\pN._-]+$/u', 'unique:'.User::class],
                 'email' => ['required', 'string', 'lowercase', 'email', 'max:255', 'unique:'.User::class],
                 'password' => ['required', 'confirmed', Rules\Password::defaults()],
@@ -44,11 +46,16 @@ class RegisteredUserController extends Controller
             ]
         );
 
+        $family = Family::create([
+            'name' => $request->string('family_name')->toString(),
+        ]);
+
         $user = User::create([
             'name' => $request->name,
             'username' => $request->username,
             'email' => $request->email,
             'role' => 'parent',
+            'family_id' => $family->id,
             'password' => Hash::make($request->password),
         ]);
 

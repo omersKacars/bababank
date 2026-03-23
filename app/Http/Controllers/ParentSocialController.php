@@ -25,6 +25,7 @@ class ParentSocialController extends Controller
         $discover = User::query()
             ->where('role', 'parent')
             ->whereKeyNot($user->id)
+            ->when($user->family_id !== null, fn ($q) => $q->where('family_id', '!=', $user->family_id))
             ->when($query !== '', function ($builder) use ($query): void {
                 $builder->where(function ($q) use ($query): void {
                     $q->where('name', 'like', "%{$query}%")

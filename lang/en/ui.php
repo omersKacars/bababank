@@ -41,6 +41,7 @@ return [
     'email' => 'Email',
     'password_confirm' => 'Confirm Password',
     'register_hint' => 'After registration, you can create child accounts from your dashboard.',
+    'family_name' => 'Family Name',
     'already_has_account' => 'Already have an account?',
     'parent_panel' => 'Bababank - Parent Dashboard',
     'child_panel' => 'Bababank - Child Dashboard',
@@ -130,4 +131,7 @@ return [
     'feature_friend_requests' => 'Friend Requests',
     'feature_parent_chat' => 'Parent-Parent Chat',
     'feature_child_parent_chat' => 'Child -> Parent Message',
+    'add_parent_to_family' => 'Add Parent to Family',
+    'add_parent' => 'Add Parent',
+    'parent_added' => 'A new parent was added to the family.',
 ];

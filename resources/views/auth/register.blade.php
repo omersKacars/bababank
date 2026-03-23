@@ -14,6 +14,12 @@
             <x-input-error :messages="$errors->get('name')" class="mt-2" />
         </div>
 
+        <div class="mt-4">
+            <x-input-label for="family_name" :value="__('ui.family_name')" />
+            <x-text-input id="family_name" class="block mt-1 w-full" type="text" name="family_name" :value="old('family_name')" required />
+            <x-input-error :messages="$errors->get('family_name')" class="mt-2" />
+        </div>
+
         <!-- Username -->
         <div class="mt-4">
             <x-input-label for="username" :value="__('ui.username')" />

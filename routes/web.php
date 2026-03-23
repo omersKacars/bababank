@@ -44,6 +44,7 @@ Route::middleware('auth')->group(function () {
 Route::middleware(['auth', 'role:parent'])->prefix('parent')->group(function () {
     Route::get('/dashboard', [ParentDashboardController::class, 'index'])->name('parent.dashboard');
     Route::post('/children', [ParentChildController::class, 'store'])->name('parent.children.store');
+    Route::post('/parents', [ParentChildController::class, 'storeParent'])->name('parent.parents.store');
     Route::patch('/children/{child}/password', [ParentChildController::class, 'updatePassword'])->name('parent.children.password.update');
     Route::delete('/children/{child}', [ParentChildController::class, 'destroy'])->name('parent.children.destroy');
     Route::post('/children/{child}/transactions', [TransactionController::class, 'store'])->name('parent.transactions.store');

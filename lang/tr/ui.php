@@ -41,6 +41,7 @@ return [
     'email' => 'E-posta',
     'password_confirm' => 'Şifre Tekrar',
     'register_hint' => 'Kayıt sonrası çocuk hesaplarını panelden oluşturabilirsiniz.',
+    'family_name' => 'Aile Adı',
     'already_has_account' => 'Zaten hesabın var mı?',
     'parent_panel' => 'Bababank - Veli Paneli',
     'child_panel' => 'Bababank - Çocuk Paneli',
@@ -130,4 +131,7 @@ return [
     'feature_friend_requests' => 'Arkadaşlık İstekleri',
     'feature_parent_chat' => 'Veli-Veli Sohbet',
     'feature_child_parent_chat' => 'Çocuk -> Veli Mesaj',
+    'add_parent_to_family' => 'Aileye Veli Ekle',
+    'add_parent' => 'Veli Ekle',
+    'parent_added' => 'Aileye yeni veli eklendi.',
 ];

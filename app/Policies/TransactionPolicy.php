@@ -19,8 +19,12 @@ class TransactionPolicy
      */
     public function view(User $user, Transaction $transaction): bool
     {
+        $child = $transaction->child;
+        $isFamilyMatch = $user->family_id !== null && $child?->family_id === $user->family_id;
+        $isLegacyOwner = $user->family_id === null && $child?->parent_id === $user->id;
+
         return $transaction->child_user_id === $user->id
-            || ($user->isParent() && $transaction->child?->parent_id === $user->id);
+            || ($user->isParent() && ($isFamilyMatch || $isLegacyOwner));
     }
 
     /**

@@ -19,8 +19,12 @@ class AccountPolicy
      */
     public function view(User $user, Account $account): bool
     {
+        $child = $account->child;
+        $isFamilyMatch = $user->family_id !== null && $child?->family_id === $user->family_id;
+        $isLegacyOwner = $user->family_id === null && $child?->parent_id === $user->id;
+
         return $account->child_user_id === $user->id
-            || ($user->isParent() && $account->child?->parent_id === $user->id);
+            || ($user->isParent() && ($isFamilyMatch || $isLegacyOwner));
     }
 
     /**
@@ -36,7 +40,12 @@ class AccountPolicy
      */
     public function update(User $user, Account $account): bool
     {
-        return $user->isParent() && $account->child?->parent_id === $user->id;
+        $child = $account->child;
+        $isFamilyMatch = $user->family_id !== null && $child?->family_id === $user->family_id;
+        $isLegacyOwner = $user->family_id === null && $child?->parent_id === $user->id;
+
+        return $user->isParent()
+            && ($isFamilyMatch || $isLegacyOwner);
     }
 
     /**
