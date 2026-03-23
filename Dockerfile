@@ -36,4 +36,4 @@ RUN mkdir -p storage/framework/cache storage/framework/sessions storage/framewor
 EXPOSE 10000
 
 # Run migration before starting app on each deploy/restart
-CMD ["sh", "-c", "php artisan migrate --force && php -S 0.0.0.0:${PORT:-10000} -t public"]
+CMD ["sh", "-c", "php artisan optimize:clear && php artisan migrate --force && php -S 0.0.0.0:${PORT:-10000} -t public"]
